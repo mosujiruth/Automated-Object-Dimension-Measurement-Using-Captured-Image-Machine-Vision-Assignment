@@ -125,5 +125,92 @@ def measure_objects(objects,pixels_per_cm):
         
     return measurements
 
+def draw_results(image, objects, measurements):
 
+    result = image.copy()
+
+    for obj, measurement in zip(
+        objects,
+        measurements
+    ):
+
+        x = obj["x"]
+        y = obj["y"]
+
+        width = obj["width_pixels"]
+        height = obj["height_pixels"]
+
+        cv2.rectangle(
+            result,
+            (x, y),
+            (x + width, y + height),
+            (0, 255, 0),
+            2
+        )
+
+        cv2.putText(
+            result,
+            f"Object {measurement['object_id']}",
+            (x, max(y - 35, 20)),
+            cv2.Font_Hershey_Simplex,
+            0.6,
+            (0, 255, 0),
+            2
+        )
+
+        text = (
+            f"W: {measurement['width_cm']:.2f} cm "
+            f"H: {measurement['height_cm']:.2f} cm"
+        )
+
+        cv2.putText(
+            result,
+            text,
+            (x, max(y - 10, 40)),
+            cv2.Font_hershey_simplex,
+            0.5,
+            (0, 255, 255),
+            2
+        )
+
+    return result
+
+
+def process_image(image_path, pixels_per_cm):
+
+    image = load_image(image_path)
+
+    image = resize_image(image)
+
+    gray = convert_to_grayscale(image)
+
+    blurred = apply_gaussian_blur(gray)
+
+    binary = apply_threshold(blurred)
+
+    cleaned = apply_morphology(binary)
+
+    objects = detect_objects(cleaned)
+
+    measurements = measure_objects(
+        objects,
+        pixels_per_cm
+    )
+
+    result = draw_results(
+        image,
+        objects,
+        measurements
+    )
+
+    return {
+        "original": image,
+        "gray": gray,
+        "blurred": blurred,
+        "binary": binary,
+        "cleaned": cleaned,
+        "objects": objects,
+        "measurements": measurements,
+        "result": result
+    }
     
