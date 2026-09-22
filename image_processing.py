@@ -104,3 +104,26 @@ def detect_objects(binary, min_area=min_object_area):
     return objects
 
 def measure_objects(objects,pixels_per_cm):
+    measurements =[]
+    
+    for number,obj in enumerate(
+            objects,start=1):
+        
+        width_pixels =obj["width_pixels"]
+        height_pixels =obj["height_pixels"]
+        
+        width_cm = width_pixels / pixels_per_cm
+        height_cm = height_pixels / pixels_per_cm
+        
+        measurements.append({
+            "object_id":number,
+            "width_pixels":width_pixels,
+            "height_pixels":height_pixels,
+            "width_cm":width_cm,
+            "height_cm":height_cm,
+            "area_pixels":obj["area"]})
+        
+    return measurements
+
+
+    
