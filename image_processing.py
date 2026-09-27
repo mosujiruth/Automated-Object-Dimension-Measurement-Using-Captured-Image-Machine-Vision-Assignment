@@ -46,6 +46,19 @@ def apply_gaussian_blur(gray):
     return cv2.GaussianBlur(
         gray,(5,5),0)
 
+def apply_canny(
+    blurred,
+    lower_threshold=50,
+    upper_threshold=150
+):
+    edges = cv2.Canny(
+        blurred,
+        lower_threshold,
+        upper_threshold
+    )
+
+    return edges
+
 def apply_threshold(blurred):
     _,binary=cv2.threshold(
         blurred,
